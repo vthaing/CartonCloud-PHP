@@ -24,7 +24,14 @@ services:
         tags: ['controller.service_arguments']
     App\Service\CartonCloudService:
         arguments:
-            - {baseUrl: 'https://api.cartoncloud.com.au/'}
+            $clientConfig:
+                base_uri: 'https://api.cartoncloud.com.au'
+                auth:
+                    - 'interview-test@cartoncloud.com.au'
+                    - 'test123456'
+                #Ignore SSL verification
+                verify: false
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

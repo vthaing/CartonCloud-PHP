@@ -33,16 +33,26 @@ class CartonCloudService
      *
      * @param array $purchaseOrderIds
      *
-     * @return Response[]
+     * @return []
      */
     public function getPurchaseOrdersByIds($purchaseOrderIds = [])
     {
         $requests = [];
         foreach ($purchaseOrderIds as $orderId) {
-            $this->createPurchaseOrderRequest($orderId);
+            $requests[] = $this->createPurchaseOrderRequest($orderId);
         }
 
-        return $this->sendAsyncRequests($requests);
+        $responses = $this->sendAsyncRequests($requests);
+        $result = [];
+        foreach ($responses as $response) {
+            $responseBody = $response->getBody();
+            $responseData = json_decode($responseBody->getContents());
+            if (property_exists($responseData,'data')) {
+                $result[] = $responseData->data;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -54,7 +64,7 @@ class CartonCloudService
      */
     public function createPurchaseOrderRequest($id)
     {
-        $request = new Request('GET',"/CartonCloud_Demo/PurchaseOrders/$id", ['query' => ['version'=>5, 'assocuated'=> 'true']]);
+        $request = new Request('GET',"/CartonCloud_Demo/PurchaseOrders/$id?version=5&associated=true");
         return $request;
     }
 
@@ -74,7 +84,7 @@ class CartonCloudService
         }
 
         // Wait for the requests to complete, even if some of them fail
-        $responses = settle($promises)->wait();
+        $responses = \GuzzleHttp\Promise\unwrap($promises);
         return $responses;
     }
 
