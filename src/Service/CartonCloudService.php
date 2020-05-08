@@ -9,6 +9,8 @@
 namespace App\Service;
 
 
+use App\Entity\PurchaseOrderProduct;
+use App\Factory\PurchaseOrderProductFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\Promise;
@@ -23,9 +25,40 @@ class CartonCloudService
      */
     private $client;
 
-    public function __construct($clientConfig = [])
+    /**
+     * @var PurchaseOrderProductFactory
+     */
+    private $purchaseOrderProductFactory;
+
+    public function __construct(PurchaseOrderProductFactory $purchaseOrderProductFactory, $clientConfig = [])
     {
         $this->client = new Client($clientConfig);
+        $this->purchaseOrderProductFactory = $purchaseOrderProductFactory;
+    }
+
+    /**
+     * Get purchase order product from raw data
+     *
+     * @param array $purchaseOrderIds
+     *
+     * @return PurchaseOrderProduct[]
+     */
+    public function getPurchaseOrderProductsByOrderIds($purchaseOrderIds = [])
+    {
+        $result = [];
+        $purchaseOrders = $this->getPurchaseOrdersByIds($purchaseOrderIds);
+        foreach ($purchaseOrders as $purchaseOrder) {
+            if (!property_exists($purchaseOrder, 'PurchaseOrderProduct')) {
+                continue;
+            }
+
+            foreach ($purchaseOrder->PurchaseOrderProduct as $rawPurchaseOrderProduct) {
+                $purchaseOrderProduct = $this->purchaseOrderProductFactory->createPurchaseOrderProductFromCloudData($rawPurchaseOrderProduct);
+                $result[] = $purchaseOrderProduct;
+            }
+        }
+
+        return $result;
     }
 
     /**
