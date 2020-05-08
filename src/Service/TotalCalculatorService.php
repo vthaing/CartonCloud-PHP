@@ -32,7 +32,7 @@ class TotalCalculatorService
      */
     public function calculateTotal($purchaseOrderProducts)
     {
-        $result = [];
+        $totals = [];
         foreach ($purchaseOrderProducts as $item) {
             $productTypeId = $item->getProduct() ? $item->getProduct()->getProductTypeId() : null;
             //Do nothing when product type id is not existed
@@ -41,8 +41,8 @@ class TotalCalculatorService
             }
 
             //Initialize sum by product type id
-            if (!array_key_exists($productTypeId, $result)) {
-                $result[$productTypeId] = 0;
+            if (!array_key_exists($productTypeId, $totals)) {
+                $totals[$productTypeId] = 0;
             }
 
             $productPurchaseTotal = 0;
@@ -52,7 +52,19 @@ class TotalCalculatorService
                 $productPurchaseTotal += $calculator->calculate($item);
             }
 
-            $result[$productTypeId] += $productPurchaseTotal;
+            $totals[$productTypeId] += $productPurchaseTotal;
+        }
+
+        return $this->prepareTotalResult($totals);
+    }
+
+    protected function prepareTotalResult($totals) {
+        $result = [];
+        foreach ($totals as $productTypeId => $total) {
+            $resultItem = [];
+            $resultItem['product_type_id'] = $productTypeId;
+            $resultItem['total'] = $total;
+            $result[] = $resultItem;
         }
 
         return $result;

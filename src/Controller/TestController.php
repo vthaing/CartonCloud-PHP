@@ -9,6 +9,8 @@
 namespace App\Controller;
 use App\Service\CartonCloudService;
 use App\Service\TotalCalculatorService;
+use BearClaw\Warehousing\PurchaseOrderService;
+use BearClaw\Warehousing\TotalsCalculator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,14 +29,12 @@ class TestController
         CartonCloudService $cartonCloudService,
         TotalCalculatorService $totalCalculatorService
     ) {
-
         $requestData = json_decode($request->getContent());
 
         $purchaseOrderProducts = $cartonCloudService->getPurchaseOrderProductsByOrderIds($requestData->purchase_order_ids);
         $totalGroupedByProductType = $totalCalculatorService->calculateTotal($purchaseOrderProducts);
-        $responseData = $this->prepareDataForResponse($totalGroupedByProductType);
 
-        return new JsonResponse($responseData);
+        return new JsonResponse(['result' => $totalGroupedByProductType]);
     }
 
     /**
@@ -45,26 +45,10 @@ class TestController
      */
     public function actionHome()
     {
+        $totalCalculator = new TotalsCalculator();
+        $totalCalculator->generateReport([2344, 2345, 2346]);
         return new JsonResponse('ok');
 
-    }
-
-    /**
-     * Prepare data for response
-     * @param $data
-     * @return array
-     */
-    protected function prepareDataForResponse($data)
-    {
-        $result = ['result' => []];
-        foreach ($data as $productTypeId => $total) {
-            $resultItem = [];
-            $resultItem['product_type_id'] = $productTypeId;
-            $resultItem['total'] = $total;
-            $result['result'][] = $resultItem;
-        }
-
-        return $result;
     }
 
 }
