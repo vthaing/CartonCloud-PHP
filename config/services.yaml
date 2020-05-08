@@ -35,6 +35,7 @@ services:
         class: App\Service\Calculators\VolumeCalculator
     app.calculator_method.by_weight:
         class: App\Service\Calculators\WeighCalculator
+
     App\Service\TotalCalculatorService:
         arguments:
             $formulaByTypeConfig:

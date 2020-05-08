@@ -78,7 +78,7 @@ class TotalCalculatorService
      *
      * @return CalculatorInterface[]
      */
-    protected function getCalculatorsForAPurchaseOrderProduct(PurchaseOrderProduct $purchaseOrderProduct)
+    public function getCalculatorsForAPurchaseOrderProduct(PurchaseOrderProduct $purchaseOrderProduct)
     {
         $product = $purchaseOrderProduct->getProduct();
         if ($product && array_key_exists($product->getProductTypeId(), $this->formulaByTypeConfig)) {
