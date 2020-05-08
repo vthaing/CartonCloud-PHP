@@ -38,6 +38,18 @@ class TestController
     }
 
     /**
+     **
+     * @Route("/")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function actionHome()
+    {
+        return new JsonResponse('ok');
+
+    }
+
+    /**
      * Prepare data for response
      * @param $data
      * @return array
