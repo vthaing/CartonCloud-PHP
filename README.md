@@ -1,5 +1,7 @@
 #Senior Developer Pre-Interview Test Assignment
 ##Part 1
+Please run `composer install` before testing
+
 Please run this command to init system: `php -S 127.0.0.1:8000 -t public`
 
 You can use Postman or any HTTP client to test API.
@@ -7,6 +9,8 @@ You can use Postman or any HTTP client to test API.
 Endpoint: `http://localhost/test`.
 
 Basic Auth: `demo/pwd1234`
+
+Rrun unit test: `php bin/phpunit`
 
 ### Service description
 #### Add additional mapping for calculation method
