@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 use App\Service\CartonCloudService;
+use App\Service\TotalCalculatorService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,12 +24,35 @@ class TestController
      */
     public function actionTest(
         Request $request,
-        CartonCloudService $cartonCloudService
+        CartonCloudService $cartonCloudService,
+        TotalCalculatorService $totalCalculatorService
     ) {
 
         $requestData = json_decode($request->getContent());
-        $purchaseOrders = $cartonCloudService->getPurchaseOrdersByIds($requestData->purchase_order_ids);
-        return new JsonResponse();
+
+        $purchaseOrderProducts = $cartonCloudService->getPurchaseOrderProductsByOrderIds($requestData->purchase_order_ids);
+        $totalGroupedByProductType = $totalCalculatorService->calculateTotal($purchaseOrderProducts);
+        $responseData = $this->prepareDataForResponse($totalGroupedByProductType);
+
+        return new JsonResponse($responseData);
+    }
+
+    /**
+     * Prepare data for response
+     * @param $data
+     * @return array
+     */
+    protected function prepareDataForResponse($data)
+    {
+        $result = ['result' => []];
+        foreach ($data as $productTypeId => $total) {
+            $resultItem = [];
+            $resultItem['product_type_id'] = $productTypeId;
+            $resultItem['total'] = $total;
+            $result['result'][] = $resultItem;
+        }
+
+        return $result;
     }
 
 }

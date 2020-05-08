@@ -29,7 +29,7 @@ class ProductFactory
         $entity->setProductTypeId($product->product_type_id);
         $entity->setVolume($product->volume);
         $entity->setWeight($product->weight);
-        $entity->setRawData($product);
+        //$entity->setRawData($product);
 
         return $entity;
     }

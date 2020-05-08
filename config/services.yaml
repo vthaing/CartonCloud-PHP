@@ -31,6 +31,23 @@ services:
                     - 'test123456'
                 #Ignore SSL verification
                 verify: false
+    app.calculator_method.by_volume:
+        class: App\Service\Calculators\VolumeCalculator
+    app.calculator_method.by_weight:
+        class: App\Service\Calculators\WeighCalculator
+    App\Service\TotalCalculatorService:
+        arguments:
+            $formulaByTypeConfig:
+#                product_type_id:
+#                    - app.calculator_method.method_1
+#                    - app.calculator_method.method_2
+                1:
+                    - '@app.calculator_method.by_weight'
+                2:
+                    - '@app.calculator_method.by_volume'
+                3:
+                    - '@app.calculator_method.by_weight'
+
 
 
     # add more service definitions when explicit configuration is needed
