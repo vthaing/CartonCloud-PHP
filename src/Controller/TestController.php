@@ -9,8 +9,6 @@
 namespace App\Controller;
 use App\Service\CartonCloudService;
 use App\Service\TotalCalculatorService;
-use BearClaw\Warehousing\PurchaseOrderService;
-use BearClaw\Warehousing\TotalsCalculator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,10 +43,7 @@ class TestController
      */
     public function actionHome()
     {
-        $totalCalculator = new TotalsCalculator();
-        $totalCalculator->generateReport([2344, 2345, 2346]);
         return new JsonResponse('ok');
-
     }
 
 }
