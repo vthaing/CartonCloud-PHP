@@ -30,7 +30,7 @@ class PurchaseOrderProductFactory
         $entity->setUnitQuantityInitial($purchaseOrderProduct->unit_quantity_initial);
         $product = $this->productFactory->createFromCloudData($purchaseOrderProduct->Product);
         $entity->setProduct($product);
-        //$entity->setRawData($purchaseOrderProduct);
+        $entity->setRawData($purchaseOrderProduct);
 
         return $entity;
 
